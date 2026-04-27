@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5050/api').replace(/\/$/, '');
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:5050/api',
+  baseURL: API_BASE_URL,
 });
 
 export const getItems = () => API.get('/items');
