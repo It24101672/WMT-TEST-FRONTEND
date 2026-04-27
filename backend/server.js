@@ -36,21 +36,25 @@ const Item = mongoose.model('Item', itemSchema);
 
 // Health Check / Root
 app.get('/', (req, res) => {
-  res.send('🚀 Backend is running! Use /api/items or /items to fetch data.');
+  res.send('🚀 Backend is running!');
 });
 
+const itemRouter = express.Router();
+
 // Get all items
-const getItems = async (req, res) => {
+itemRouter.get('/', async (req, res) => {
   try {
     const items = await Item.find().sort({ createdAt: -1 });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+});
 
 // Create item
-const createItem = async (req, res) => {
+itemRouter.post('/', async (req, res) => {
+  console.log('📥 POST request received at /items');
+  console.log('Body:', req.body);
   try {
     const savedItem = await Item.create(req.body);
     console.log('💾 Data saved to Database!');
@@ -59,33 +63,31 @@ const createItem = async (req, res) => {
     console.error('❌ Database Save Error:', err.message);
     res.status(400).json({ message: err.message });
   }
-};
+});
 
-// Update item (Added missing PUT route)
-const updateItem = async (req, res) => {
+// Update item
+itemRouter.put('/:id', async (req, res) => {
   try {
     const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedItem);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-};
+});
 
 // Delete item
-const deleteItem = async (req, res) => {
+itemRouter.delete('/:id', async (req, res) => {
   try {
     await Item.findByIdAndDelete(req.params.id);
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+});
 
-// Map routes to both /api/items and /items to prevent 404s
-app.get(['/api/items', '/items'], getItems);
-app.post(['/api/items', '/items'], createItem);
-app.put(['/api/items/:id', '/items/:id'], updateItem);
-app.delete(['/api/items/:id', '/items/:id'], deleteItem);
+// Apply the router to both paths
+app.use('/api/items', itemRouter);
+app.use('/items', itemRouter);
 
 // 404 Handler
 app.use((req, res) => {
