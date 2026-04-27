@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  // Use 127.0.0.1 and port 5050 to ensure we hit the backend directly
-  baseURL: 'http://127.0.0.1:5050/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:5050/api',
 });
 
 export const getItems = () => API.get('/items');
