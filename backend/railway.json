@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "railpack",
+    "rootDirectory": "/backend"
+  },
+  "deploy": {
+    "startCommand": "npm start"
+  }
+}
